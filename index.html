@@ -1,0 +1,872 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منوی دیجیتال یامی لند | Yummy Land Menu</title>
+    <style>
+        /* تنظیمات پالت رنگی اختصاصی */
+        :root {
+            --bg-cream: #faf5eb;
+            --bg-cream-dark: #f3e9d7;
+            --sage-green: #3d5a45;
+            --sage-light: #eff4f0;
+            --gold-accent: #c49a45;
+            --text-dark: #1e2721;
+            --text-muted: #556358;
+            --white: #ffffff;
+            --border-color: #d8cebc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* صفحه خوش‌آمدگویی (Splash Screen) */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-cream);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 1000;
+            padding: 20px;
+            border: 12px solid var(--sage-green);
+        }
+
+        .logo-wrapper {
+            margin-bottom: 30px;
+            border: 2px dashed var(--gold-accent);
+            padding: 25px 40px;
+            border-radius: 15px;
+            background-color: var(--sage-light);
+        }
+
+        .logo-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--sage-green);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .logo-subtitle {
+            font-size: 14px;
+            color: var(--gold-accent);
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        .splash-tagline {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .enter-btn {
+            background-color: var(--sage-green);
+            color: var(--white);
+            border: 2px solid var(--gold-accent);
+            padding: 14px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(61,90,69,0.2);
+        }
+
+            .enter-btn:hover {
+                background-color: var(--gold-accent);
+                border-color: var(--sage-green);
+            }
+
+        /* ساختار منوی اصلی */
+        #main-app {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--bg-cream);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            padding-bottom: 40px;
+        }
+
+        header {
+            background-color: var(--sage-green);
+            color: var(--white);
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom: 4px solid var(--gold-accent);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+            header h1 {
+                font-size: 24px;
+                letter-spacing: 1px;
+                color: var(--bg-cream);
+            }
+
+            header p {
+                font-size: 11px;
+                color: var(--gold-accent);
+                margin-top: 2px;
+            }
+
+        /* منوی ناوبری اسکرولی بالای صفحه */
+        .nav-container {
+            position: sticky;
+            top: 75px;
+            background-color: var(--bg-cream-dark);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 99;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+            padding: 10px 5px;
+        }
+
+            .nav-container::-webkit-scrollbar {
+                display: none;
+            }
+
+        .nav-tabs {
+            display: inline-flex;
+            gap: 8px;
+            padding: 0 10px;
+        }
+
+        .nav-tab {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--white);
+            color: var(--sage-green);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+            .nav-tab.active {
+                background-color: var(--sage-green);
+                color: var(--white);
+                border-color: var(--gold-accent);
+            }
+
+        .menu-container {
+            padding: 15px;
+        }
+
+        .category-section {
+            margin-bottom: 25px;
+        }
+
+        .category-title-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--gold-accent);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+        }
+
+        .category-title {
+            font-size: 20px;
+            color: var(--sage-green);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* طراحی آیتم‌های منو */
+        .menu-item {
+            background-color: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+            .menu-item:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                border-color: var(--gold-accent);
+            }
+
+        .item-summary {
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .toggle-icon {
+            font-size: 14px;
+            color: var(--gold-accent);
+            transition: transform 0.3s ease;
+        }
+
+        /* مشخصات بازشونده (آکاردئون) */
+        .item-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.3s ease;
+            background-color: var(--sage-light);
+            border-top: 0 solid var(--border-color);
+        }
+
+        .menu-item.expanded .item-details {
+            max-height: 1000px;
+            border-top: 1px dashed var(--border-color);
+            padding: 15px;
+        }
+
+        .menu-item.expanded .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* ساختار تصویر آیتم */
+        .item-image-container {
+            width: 100%;
+            height: 200px;
+            background-color: var(--bg-cream-dark);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .item-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* استایل حالت خالی بودن عکس */
+        .no-image-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            padding: 20px;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-cream-dark) 0%, var(--sage-light) 100%);
+        }
+
+            .no-image-placeholder::before {
+                content: "🍽️";
+                font-size: 32px;
+                margin-bottom: 6px;
+                opacity: 0.7;
+            }
+
+        .item-description {
+            font-size: 13.5px;
+            color: var(--text-dark);
+            background: var(--white);
+            padding: 12px;
+            border-right: 3px solid var(--gold-accent);
+            border-radius: 4px;
+            text-align: justify;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+            border-top: 1px dashed var(--border-color);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <div class="logo-wrapper">
+            <div class="logo-title">YUMMY LAND</div>
+            <div class="logo-subtitle">THE TASTE OF A DREAM</div>
+        </div>
+        <div class="splash-tagline">یامی لند؛ طعم یک رویا</div>
+        <button class="enter-btn" onclick="enterMenu()">مشاهده منوی دیجیتال</button>
+    </div>
+
+    <div id="main-app" class="hidden">
+        <header>
+            <h1>YUMMY LAND</h1>
+            <p>THE TASTE OF A DREAM — یامی لند</p>
+        </header>
+
+        <div class="nav-container">
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="scrollToCategory('burger')">برگر</div>
+                <div class="nav-tab" onclick="scrollToCategory('sandwich')">ساندویچ</div>
+                <div class="nav-tab" onclick="scrollToCategory('pizza')">پیتزا</div>
+                <div class="nav-tab" onclick="scrollToCategory('breakfast')">صبحانه</div>
+                <div class="nav-tab" onclick="scrollToCategory('appetizer')">پیش‌غذا</div>
+                <div class="nav-tab" onclick="scrollToCategory('hot-bar')">بار گرم</div>
+                <div class="nav-tab" onclick="scrollToCategory('cold-bar')">بار سرد</div>
+                <div class="nav-tab" onclick="scrollToCategory('milkshake')">میلک شیک</div>
+                <div class="nav-tab" onclick="scrollToCategory('cake')">کیک</div>
+                <div class="nav-tab" onclick="scrollToCategory('hookah')">قلیان</div>
+            </div>
+        </div>
+
+        <div class="menu-container">
+
+            <div id="burger" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">🍔 برگر</span>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">کلاسیک برگر</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/classic-burger.jpg" alt="کلاسیک برگر" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان مک دونالد، سس دست‌ساز پستو، کاهو، گوجه، خیارشور، پیاز حلقه‌ای، ۱۵۰ گرم گوشت خالص.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">چیز برگر</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/cheese-burger.jpg" alt="چیز برگر" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان مک دونالد، سس مخصوص، سیب زمینی ژولین، کاهو، گوجه، خیارشور، ۱۵۰ گرم گوشت خالص، پنیر گودا، بیکن.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">چیکن برگر</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/chicken-burger.jpg" alt="چیکن برگر" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان مک دونالد، سس مخصوص، سیب زمینی ژولین، کاهو، گوجه، خیارشور، ۱۷۰ گرم مرغ، پنیر پستو، پنیر گودا.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">استاف برگر</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/stuff-burger.jpg" alt="استاف برگر" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان مک دونالد، سس مخصوص، سیب زمینی ژولین، کاهو، گوجه، خیارشور، بیکن، فیله مرغ گریل شده، ۳۰۰ گرم گوشت، ۴ عدد پنیر گودا.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">هات داگ برگر</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/hotdog-burger.jpg" alt="هات داگ برگر" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان مک دونالد، سس مخصوص، سیب زمینی ژولین، کاهو، گوجه، خیارشور، هات داگ، ۱۵۰ گرم گوشت، ۲ عدد پنیر گودا.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">ماشروم برگر</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/mushroom-burger.jpg" alt="ماشروم برگر" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان مک دونالد، سس پستو، سیب زمینی ژولین، کاهو، گوجه، خیارشور، قارچ و پنیر، ۱۵۰ گرم گوشت، پنیر گودا.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sandwich" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">🌭 ساندویچ</span>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">هات داگ آمریکایی</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/american-hotdog.jpg" alt="هات داگ آمریکایی" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان باگت، سس مخصوص، هات داگ، سس خردل.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">رست بیف</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/roast-beef.jpg" alt="رست بیف" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان فرانسوی، گوشت رست شده، قارچ، ذرت، پنیر پیتزا، سیب زمینی ژولین، پنیر گودا، سس مخصوص.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">رست چیکن</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/roast-chicken.jpg" alt="رست چیکن" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            نان فرانسوی، مرغ رست شده، قارچ، ذرت، پنیر پیتزا، سیب زمینی ژولین، پنیر گودا، سس مخصوص.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">پاستا آلفردو</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/alfredo.jpg" alt="پاستا آلفردو" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            شنیسل مرینیت شده، پنه ریگاته، قارچ، شیر، خامه، سبزی معطر، پنیر پارمسان، ادویه مخصوص، گوجه گیلاسی، پوره سیر.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">فیله استریپس</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/strips.jpg" alt="فیله استریپس" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            فیله مرغ سوخاری، سیب زمینی سرخ شده، گوجه، خیارشور، نان بروچن، سس مخصوص.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="pizza" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">🍕 پیتزا</span>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">چیکن پستو</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/pesto-pizza.jpg" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            خمیر ایتالیایی، سس پستو، پنیر موزارلا، شنیسل مرینیت شده، گردو، قارچ، زیتون سیاه.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">دیابلو</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/diablo-pizza.jpg" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            خمیر ایتالیایی، سس مارینارا، پنیر موزارلا، شنیسل مرینیت شده، قارچ، پنیر گودا، پنیر خامه‌ای، زیتون سیاه، فلفل هالوپینو.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">سیر و استیک</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/steak-pizza.jpg" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            خمیر ایتالیایی، سس چائو، پوره سیر، پنیر موزارلا، اسلایس راسته گوساله، قارچ، فلفل دلمه‌ای، زیتون سیاه.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">رست بیف</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/roast-pizza.jpg" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            خمیر ایتالیایی، سس مارینارا، پنیر موزارلا، گوشت رست شده، قارچ، فلفل دلمه‌ای، زیتون سیاه.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">پپرونی</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/pepperoni-pizza.jpg" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            خمیر ایتالیایی، سس کاپیا، پنیر موزارلا، کالباس پپرونی، فلفل هالوپینو.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary">
+                        <span class="item-name">مخصوص یامی لند ⭐</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-image-container">
+                            <img class="item-img" src="images/yummy-pizza.jpg" onerror="showPlaceholder(this)">
+                        </div>
+                        <div class="item-description">
+                            خمیر ایتالیایی، سس مارینارا، پنیر موزارلا، مرغ رست شده، گوشت رست شده، قارچ، فلفل دلمه‌ای، زیتون سیاه.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="breakfast" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">🍳 صبحانه</span>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">قارچ تخم‌مرغ</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="images/breakfast1.jpg" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">ترکیب سه‌عددی تخم مرغ تازه به همراه قارچ اسلایس شده بلانچ.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">نیمرو</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="images/breakfast2.jpg" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">نیمرو کلاسیک با کره حیوانی و نان داغ.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">سوسیس تخم‌مرغ</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="images/breakfast3.jpg" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">سوسیس کوکتل مرغوب خرد شده به همراه ادویه اختصاصی و تخم‌مرغ.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">املت گوجه</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="images/breakfast4.jpg" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">املت سنتی مشتی با گوجه رنده شده محلی و کره.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">املت پپرونی</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="images/breakfast5.jpg" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">املت کلاسیک همراه با اسلایس‌های تند پپرونی دودی و فلفل.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="appetizer" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">🍟 پیش‌غذا</span>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">سیب ویژه</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">سیب زمینی سرخ کرده، ادویه مخصوص، ژامبون، پنیر پیتزا، قارچ، ذرت، فلفل دلمه‌ای، گوجه، سس مخصوص.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">اسپشیال چیپس</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">چیپس، ژامبون، قارچ، ذرت، فلفل دلمه‌ای، پنیر پیتزا، سس مخصوص، گوجه، ادویه مخصوص.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">وایت فرایز</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">سیب زمینی بلژیکی سرخ کرده به همراه سس غلیظ آلفردو و قارچ.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">فرنچ فرایز</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">سیب زمینی خلال سرخ شده به همراه پودر ادویه مخصوص یامی لند.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">سالاد سزار سوخاری</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">کاهو رسمی، زیتون سیاه، گوجه گیلاسی، نان تست سیردار، ذرت، فیله مرغ سوخاری کرانچی، پنیر پارمسان، سس سزار دست‌ساز.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">سالاد سزار گریل</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">کاهو رسمی، زیتون سیاه، گوجه گیلاسی، نان تست، ذرت، فیله مرغ مرینیت گریل، پنیر پارمسان، سس سزار.</div>
+                    </div>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">نان سیر</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">خمیر ایتالیایی چرخ شده، سس سیر اختصاصی، پوره سیر فرآوری شده، پنیر موزارلا مطهر.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="hot-bar" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">☕ بار گرم</span>
+                </div>
+                <script>const hotDrinks = ["اسپرسو سینگل", "اسپرسو دوبل", "اسپرسو تریبل", "دله عربی", "کاپوچینو", "نسکافه", "هات چاکلت", "لاته", "موکا", "کارامل ماکیاتو", "امریکانو", "چای ماسالا", "چای کرک", "چای سیاه", "دمنوش"];
+                    hotDrinks.forEach(drink => {
+                        document.write(`
+                            <div class="menu-item" onclick="toggleDetails(this)">
+                                <div class="item-summary"><span class="item-name">${drink}</span><span class="toggle-icon">▼</span></div>
+                                <div class="item-details">
+                                    <div class="item-image-container"><img class="item-img" src="images/hot-${drink}.jpg" onerror="showPlaceholder(this)"></div>
+                                    <div class="item-description">تهیه شده با لاین دانه قهوه اختصاصی و پرمیوم یامی لند (عربیکا / روبوستا).</div>
+                                </div>
+                            </div>
+                        `);
+                    });</script>
+            </div>
+
+            <div id="cold-bar" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">🍹 بار سرد</span>
+                </div>
+                <script>const coldDrinks = ["آیس امریکانو", "آیس چاکلت", "آیس کاپوچینو", "آیس لاته", "هایپر کافئین", "آفوگاتو", "لیموناد", "موهیتو", "رد موهیتو", "عصاره زنجبیل"];
+                    coldDrinks.forEach(drink => {
+                        document.write(`
+                            <div class="menu-item" onclick="toggleDetails(this)">
+                                <div class="item-summary"><span class="item-name">${drink}</span><span class="toggle-icon">▼</span></div>
+                                <div class="item-details">
+                                    <div class="item-image-container"><img class="item-img" src="images/cold-${drink}.jpg" onerror="showPlaceholder(this)"></div>
+                                    <div class="item-description">نوشیدنی خنک، طبیعی و دست‌ساز تهیه شده از میوه و عصاره‌های تازه روز.</div>
+                                </div>
+                            </div>
+                        `);
+                    });</script>
+            </div>
+
+            <div id="milkshake" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">🍦 میلک شیک</span>
+                </div>
+                <script>const shakes = ["شیک نوتلا", "شیک وانیل", "شیک لوتوس", "شیک قهوه", "شیک توت فرنگی", "شیک انبه"];
+                    shakes.forEach(shake => {
+                        document.write(`
+                            <div class="menu-item" onclick="toggleDetails(this)">
+                                <div class="item-summary"><span class="item-name">${shake}</span><span class="toggle-icon">▼</span></div>
+                                <div class="item-details">
+                                    <div class="item-image-container"><img class="item-img" src="images/${shake}.jpg" onerror="showPlaceholder(this)"></div>
+                                    <div class="item-description">میلک شیک غلیظ بر پایه بستنی ممتاز و طعم‌دهنده‌های اورجینال.</div>
+                                </div>
+                            </div>
+                        `);
+                    });</script>
+            </div>
+
+            <div id="cake" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">🍰 کیک</span>
+                </div>
+                <script>const cakes = ["کیک شکلاتی غلیظ", "چیزکیک نیویورکی", "کیک ردولوت", "وافل نوتلا با موز"];
+                    cakes.forEach(cake => {
+                        document.write(`
+                            <div class="menu-item" onclick="toggleDetails(this)">
+                                <div class="item-summary"><span class="item-name">${cake}</span><span class="toggle-icon">▼</span></div>
+                                <div class="item-details">
+                                    <div class="item-image-container"><img class="item-img" src="images/cake-${cake}.jpg" onerror="showPlaceholder(this)"></div>
+                                    <div class="item-description">کیک‌های روزانه پخت تازه، مکمل فوق‌العاده برای سفارش نوشیدنی‌های گرم شما.</div>
+                                </div>
+                            </div>
+                        `);
+                    });</script>
+            </div>
+
+            <div id="hookah" class="category-section">
+                <div class="category-title-bar">
+                    <span class="category-title">💨 قلیان</span>
+                </div>
+                <div class="menu-item" onclick="toggleDetails(this)">
+                    <div class="item-summary"><span class="item-name">سرویس قلیان VIP اختصاصی</span><span class="toggle-icon">▼</span></div>
+                    <div class="item-details">
+                        <div class="item-image-container"><img class="item-img" src="images/hookah-vip.jpg" onerror="showPlaceholder(this)"></div>
+                        <div class="item-description">سرویس کامل قلیان عربی برنزی در طعم‌های انتخابی (سبک و سنگین) همراه با نبات، پاستیل، لواشک و یک قوری چای سیاه زغالی.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <footer>
+            <p>یامی لند؛ طعم یک رویا</p>
+            <p style="font-size: 11px; margin-top:5px; color: var(--gold-accent);">© 2026 Yummy Land. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script>// ورود از صفحه خوش‌آمدگویی به منو
+        function enterMenu() {
+            document.getElementById('splash-screen').style.display = 'none';
+            document.getElementById('main-app').classList.remove('hidden');
+        }
+
+        // منطق باز و بسته شدن کشویی آیتم‌ها
+        function toggleDetails(element) {
+            const siblings = element.parentNode.querySelectorAll('.menu-item');
+            siblings.forEach(sib => {
+                if(sib !== element) {
+                    sib.classList.remove('expanded');
+                }
+            });
+            element.classList.toggle('expanded');
+        }
+
+        // اسکرول نرم هد بالای صفحه به دسته‌بندی فشرده‌شده
+        function scrollToCategory(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const offset = 135;
+                const bodyRect = document.body.getBoundingClientRect().top;
+                const elementRect = element.getBoundingClientRect().top;
+                const elementPosition = elementRect - bodyRect;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+
+                const tabs = document.querySelectorAll('.nav-tab');
+                tabs.forEach(tab => {
+                    if(tab.getAttribute('onclick').includes(id)) {
+                        tab.classList.add('active');
+                        tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // مدیریت هوشمند عدم وجود عکس و ساخت باکس شیک تم سایت
+        function showPlaceholder(imgElement) {
+            const container = imgElement.parentNode;
+            container.innerHTML = `<div class="no-image-placeholder">تصویری برای این آیتم ثبت نشده است</div>`;
+        }</script>
+</body>
+</html>
